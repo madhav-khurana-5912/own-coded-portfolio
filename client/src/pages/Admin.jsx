@@ -84,14 +84,27 @@ function Admin() {
         }
     };
 
+    const [deletingId, setDeletingId] = useState(null);
+
     const handleDelete = async (id) => {
-        if (!window.confirm('Delete this testimonial?')) return;
+        // Temporary: Removed confirmation dialog to debug
+        // if (!window.confirm('Delete this testimonial?')) return;
+
+        console.log("Deleting ID:", id);
+        setDeletingId(id);
 
         try {
             await deleteDoc(doc(db, 'testimonials', id));
+            console.log("Deleted successfully");
+            // Optimistic update
+            setTestimonials(prev => prev.filter(t => t.id !== id));
+            // Then fetch to be sure
             fetchTestimonials();
         } catch (err) {
             console.error('Error deleting:', err);
+            alert("Failed to delete: " + err.message);
+        } finally {
+            setDeletingId(null);
         }
     };
 
@@ -273,15 +286,20 @@ function Admin() {
                                 </p>
                                 <p style={{ color: '#999', fontSize: '0.9rem', lineHeight: '1.5' }}>"{t.message}"</p>
                             </div>
-                            <button onClick={() => handleDelete(t.id)} style={{
-                                background: 'transparent',
-                                border: '1px solid #333',
-                                borderRadius: '6px',
-                                padding: '0.5rem',
-                                color: '#f44',
-                                cursor: 'pointer',
-                            }}>
-                                <FaTrash />
+                            <button
+                                onClick={() => handleDelete(t.id)}
+                                disabled={deletingId === t.id}
+                                style={{
+                                    background: 'transparent',
+                                    border: '1px solid #333',
+                                    borderRadius: '6px',
+                                    padding: '0.5rem',
+                                    color: deletingId === t.id ? '#666' : '#f44',
+                                    cursor: deletingId === t.id ? 'not-allowed' : 'pointer',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                {deletingId === t.id ? '...' : <FaTrash />}
                             </button>
                         </div>
                     ))}

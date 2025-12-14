@@ -1,16 +1,21 @@
-// Firebase configuration
+﻿// Firebase configuration
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyC6BXrUEk9OMgknc34lQWRfWmhi6ZK8wMM",
-    authDomain: "portfolio-by-antigravity.firebaseapp.com",
-    projectId: "portfolio-by-antigravity",
-    storageBucket: "portfolio-by-antigravity.firebasestorage.app",
-    messagingSenderId: "956302331858",
-    appId: "1:956302331858:web:9f4ea07f11355efc91820b",
-    measurementId: "G-Z3HVEEQEZG"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
+
+// Debug check for missing configuration
+if (!firebaseConfig.apiKey) {
+    console.error("FIREBASE CONFIG MISSING: Check your .env file in the client directory.");
+}
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
